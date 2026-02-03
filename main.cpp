@@ -63,8 +63,8 @@ void changerTailleTableauJeux(span<Jeu*> vieuTableauJeux, ListeJeux& listeJeux) 
 	for (int i = 0; i < listeJeux.nElements; i++) {
 		nouveauTableauJeux[i] = vieuTableauJeux[i];
 	}
-	delete[] listeJeux.*Jeu*[];
-	listeJeux.*Jeu = nouveauTableauJeux;
+	delete[] listeJeux.elements;
+	listeJeux.elements = nouveauTableauJeux;
 }
 
 //TODO: Fonction pour ajouter un Jeu à ListeJeux.

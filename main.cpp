@@ -56,12 +56,12 @@ Designer* lireDesigner(istream& fichier)
 }
 
 //TODO: Fonction qui change la taille du tableau de jeux de ListeJeux.
-void changerTailleTableauJeux(span<Jeu*> vieuTableauJeux, ListeJeux& listeJeux) {
+void changerTailleTableauJeux(span<Jeu**> vieuTableauJeux, ListeJeux& listeJeux) {
 	int capaciteDoublee = 2 * listeJeux.capacite;
-	Jeu *nouveauTableauJeux = new Jeu[capaciteDoublee];
+	Jeu** nouveauTableauJeux = new Jeu * [capaciteDoublee];
 	listeJeux.capacite = capaciteDoublee;
 	for (int i = 0; i < listeJeux.nElements; i++) {
-		nouveauTableauJeux[i] = vieuTableauJeux[i];
+		nouveauTableauJeux[i] = *vieuTableauJeux[i];
 	}
 	delete[] listeJeux.elements;
 	listeJeux.elements = nouveauTableauJeux;
@@ -70,7 +70,7 @@ void changerTailleTableauJeux(span<Jeu*> vieuTableauJeux, ListeJeux& listeJeux) 
 //TODO: Fonction pour ajouter un Jeu à ListeJeux.
 void ajouterJeuDansListe(ListeJeux& listeJeux) {
 	if (listeJeux.nElements == listeJeux.capacite - 1) {
-		changerTailleTableauJeux(listeJeux.(*elements), listeJeux);
+		changerTailleTableauJeux(listeJeux.elements, listeJeux);
 	}
 	ListeJeux.nElements = nombre d'éléments dans nouveauTableauJeux[i];
 

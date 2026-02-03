@@ -56,24 +56,24 @@ Designer* lireDesigner(istream& fichier)
 }
 
 //TODO: Fonction qui change la taille du tableau de jeux de ListeJeux.
-void changerTailleTableauJeux(span<Jeu**> vieuTableauJeux, ListeJeux& listeJeux) {
+void changerTailleTableauJeux(ListeJeux& listeJeux) {
 	int capaciteDoublee = 2 * listeJeux.capacite;
 	Jeu** nouveauTableauJeux = new Jeu * [capaciteDoublee];
 	listeJeux.capacite = capaciteDoublee;
 	for (int i = 0; i < listeJeux.nElements; i++) {
-		nouveauTableauJeux[i] = *vieuTableauJeux[i];
+		nouveauTableauJeux[i] = listeJeux.elements[i];
 	}
 	delete[] listeJeux.elements;
 	listeJeux.elements = nouveauTableauJeux;
 }
 
 //TODO: Fonction pour ajouter un Jeu à ListeJeux.
-void ajouterJeuDansListe(ListeJeux& listeJeux) {
+void ajouterJeuDansListe(ListeJeux& listeJeux, Jeu jeu) {
 	if (listeJeux.nElements == listeJeux.capacite - 1) {
-		changerTailleTableauJeux(listeJeux.elements, listeJeux);
+		changerTailleTableauJeux(listeJeux);
 	}
-	ListeJeux.nElements = nombre d'éléments dans nouveauTableauJeux[i];
-
+	listeJeux.nElements += 1;
+	listeJeux.elements[nElements] = jeu;
 }
 
 //TODO: Fonction qui enlève un jeu de ListeJeux.
@@ -88,7 +88,7 @@ Jeu* lireJeu(istream& fichier)
 
 	//TODO: Ajouter en mémoire le jeu lu. Il faut revoyer le pointeur créé.
 	Jeu* ptrJeu = &jeu;// new Jeu;
-	ptrJeu = &jeu;
+	//ptrJeu = &jeu;
 	// TIP: Afficher un message lorsque l'allocation du jeu est réussie pour aider au débogage.
 	/*if (*ptrJeu) {
 		cout << "L'allocation du jeu est réussie.";
@@ -111,7 +111,7 @@ ListeJeux creerListeJeux(const string& nomFichier)
 	ListeJeux listeJeux = {};
 	for ([[maybe_unused]] int n : iter::range(nElements))
 	{
-		listeJeux[n] = lireJeu(fichier); //TODO: Ajouter le jeu à la ListeJeux.
+		listeJeux.elements[n] = lireJeu(fichier); //TODO: Ajouter le jeu à la ListeJeux.
 	}
 
 	return listeJeux; //TODO: Renvoyer la ListeJeux.

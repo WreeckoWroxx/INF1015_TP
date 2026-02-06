@@ -95,10 +95,28 @@ void ajouterJeuDansListe(ListeJeux& listeJeux, Jeu* jeu) {
 
 //TODO: Fonction qui enlève un jeu de ListeJeux (listeJeuxParticipes).
 //Fait  
-bool enleverJeuDeListe(ListeJeux& listeJeux, const Jeu* jeuAEnlever) {
-	if (listeJeux.nElements == 0 || listeJeux.elements == nullptr) { //|| jeuAEnlever == nullptr) {
-		return false;
+void enleverJeuDeListe(Designer* d, const Jeu* jeuAEnlever) {
+	if (d->listeJeuxParticipes.nElements == 0 || d->listeJeuxParticipes.elements == nullptr) { //|| jeuAEnlever == nullptr) {
+		return;
 	}
+	for (int i = 0; i < d->listeJeuxParticipes.nElements; i++) {
+		if (d->listeJeuxParticipes.elements[i]->titre == jeuAEnlever->titre) {
+			//d->listeJeuxParticipes.elements[i] = nullptr;
+			//delete d->listeJeuxParticipes.elements[i];
+			d->listeJeuxParticipes.nElements--;
+
+			if (d->listeJeuxParticipes.nElements == 0) {
+				delete[] d->listeJeuxParticipes.elements;
+				delete d;
+			}
+			else {
+				for (int j = i; j < d->listeJeuxParticipes.nElements; j++) {
+					d->listeJeuxParticipes.elements[j] = d->listeJeuxParticipes.elements[j + 1];
+				}
+			}
+		}
+	}
+	/*
 	unsigned indexID = 0;
 	while (indexID < listeJeux.nElements && listeJeux.elements[indexID] != jeuAEnlever) {
 		++indexID;
@@ -114,7 +132,7 @@ bool enleverJeuDeListe(ListeJeux& listeJeux, const Jeu* jeuAEnlever) {
 
 		return true;
 	}
-
+	*/
 }
 
 Jeu* lireJeu(istream& fichier, ListeJeux& listeJeux)
@@ -164,7 +182,7 @@ ListeJeux creerListeJeux(const string& nomFichier)
 
 //TODO: Fonction pour détruire un jeu (libération de mémoire allouée).
 //Fait
-void detruireJeu(Jeu* jeu) {
+void detruireJeu(ListeJeux& listeJeux, Jeu* jeu) {
 
 	if (jeu == nullptr) {
 		return;
@@ -176,19 +194,28 @@ void detruireJeu(Jeu* jeu) {
 				//Designer* d = jeu->designers.elements[i];
 				for (Jeu* j : span(d->listeJeuxParticipes.elements, d->listeJeuxParticipes.nElements)) {
 					if (jeu->titre == j->titre) {
-						enleverJeuDeListe(d->listeJeuxParticipes, j);
+						enleverJeuDeListe(d, j);
 					}
 				}
 			}
 		}
 	}
-	delete[] jeu->designers.elements;
-	jeu->designers.elements = nullptr;
-	jeu->designers.nElements = 0;
-	jeu->designers.capacite = 0;
-
+	//for (int i = 0; i < listeJeux.nElements; i++) {
+	//	if (listeJeux.elements[i]->titre == jeu->titre) {
+	//		listeJeux.nElements--;
+	//		for (int j = i; j < listeJeux.nElements; j++) {
+	//			listeJeux.elements[j] = listeJeux.elements[j + 1];
+	//		}
+	//		break;
+	//	}
+	//}
+	//jeu->designers.elements = nullptr;
+	//jeu->designers.nElements = 0;
+	//jeu->designers.capacite = 0;
 	cout << "Destruction du jeu : " << jeu->titre << endl; // Vous pouvez enlever l'affichage une fois que le tout fonctionne.
+	delete[] jeu->designers.elements;
 	delete jeu;
+	//cout << "Destruction du jeu : " << jeu->titre << endl;
 }
 
 //TODO: Fonction pour détruire une ListeJeux et tous ses jeux.
@@ -197,8 +224,8 @@ void detruireListeJeux(ListeJeux& listeJeux) {
 	if (listeJeux.elements != nullptr) {	 // pour eviter que le code crash
 		for (unsigned i = 0; i < listeJeux.nElements; ++i) {
 			if (listeJeux.elements[i] != nullptr) {
-				detruireJeu(listeJeux.elements[i]);
-				listeJeux.elements[i] = nullptr;
+				detruireJeu(listeJeux, listeJeux.elements[i]);
+				//listeJeux.elements[i] = nullptr;
 			}
 		}
 	}
@@ -245,7 +272,16 @@ void afficherInfosJeux(const Jeu& j) {
 
 //TODO: Fonction pour afficher tous les jeux de ListeJeux, séparés par un ligne.
 // Votre ligne de séparation doit être différent de celle utilisée dans le main.
+void afficherListeJeux(ListeJeux& listeJeux) {
+	static const string nouvelLigneSeparation = "\033[35m----------------------------------\033[0m\n";
+	cout << "Liste de jeux complete : " << endl << endl;
+	for (unsigned i = 0; i < listeJeux.nElements; ++i) {
+		cout << "\t\t " << listeJeux.elements[i]->titre << endl;
+		cout << "\t\t " << nouvelLigneSeparation;
+	}
+	cout << "\n\n";
 
+}
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
@@ -268,12 +304,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	cout << ligneSeparation << endl;
 
 	//TODO: Appel à votre fonction d'affichage de votre liste de jeux.
+	afficherListeJeux(listeJeux);
 
 	//TODO: Faire les appels à toutes vos fonctions/méthodes pour voir qu'elles fonctionnent et avoir 0% de lignes non exécutées dans le programme (aucune ligne rouge dans la couverture de code; c'est normal que les lignes de "new" et "delete" soient jaunes).  Vous avez aussi le droit d'effacer les lignes du programmes qui ne sont pas exécutée, si finalement vous pensez qu'elle ne sont pas utiles.
-	afficherInfosDesigner(*(listeJeux.elements[0]->designers.elements[0]));
-	//ajouterJeuDansListe(listeJeux, );
+	//afficherInfosDesigner(*(listeJeux.elements[0]->designers.elements[0]));
+
 	//TODO: Détruire tout avant de terminer le programme.  Devrait afficher "Aucune fuite detectee." a la sortie du programme; il affichera "Fuite detectee:" avec la liste des blocs, s'il manque des delete.
-	detruireJeu(listeJeux.elements[0]);
-	afficherInfosJeux(*(listeJeux.elements[0]));
-	//detruireListeJeux(listeJeux);
+	//detruireJeu(listeJeux, listeJeux.elements[1]);
+	//afficherInfosJeux(*(listeJeux.elements[1]));
+	detruireListeJeux(listeJeux);
 }

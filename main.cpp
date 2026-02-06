@@ -38,47 +38,70 @@ string lireString(istream& fichier)
 
 //TODO: Fonction qui cherche un designer par son nom dans une ListeJeux.  Devrait utiliser span.
 
+Designer* chercherDesigner(ListeJeux& listeJeux, Designer& designer) {
+	for (Jeu* jeu : span(listeJeux.elements, listeJeux.nElements)) {
+		for (Designer* autreDesigner : span(jeu->designers.elements, jeu->designers.nElements)) {
+			if (designer.nom == autreDesigner->nom) {
+				cout << "Même designer : " << autreDesigner->nom << endl;
+				return autreDesigner;
+			}
+		}
+	}
+	return nullptr;
+}
 
-Designer* lireDesigner(istream& fichier)
+Designer* lireDesigner(istream& fichier, ListeJeux& listeJeux)
 {
 	Designer designer = {};
 	designer.nom = lireString(fichier);
 	designer.anneeNaissance = lireUint16(fichier);
 	designer.pays = lireString(fichier);
+	// code ajouté
+	Designer* ptrDesigner = chercherDesigner(listeJeux, designer);
+	if (ptrDesigner == nullptr) {
+		ptrDesigner = new Designer(designer);
+		ptrDesigner->listeJeuxParticipes = ListeJeux{ 0, 1, new Jeu * [1] };
+		cout << ptrDesigner->nom << endl;
+	}
+
 
 	//TODO: Ajouter en mémoire le designer lu. Il faut revoyer le pointeur créé.
+
 	// TIP: Afficher un message lorsque l'allocation du designer est réussie pour aider au débogage.
 	// Vous pouvez enlever l'affichage une fois que le tout fonctionne.
 
 
-	cout << designer.nom << endl;  //TODO: Enlever cet affichage temporaire servant à voir que le code fourni lit bien les jeux.
-	return {}; //TODO: Retourner le pointeur vers le designer crée.
+	//cout << designer.nom << endl;  //TODO: Enlever cet affichage temporaire servant à voir que le code fourni lit bien les jeux.
+	return ptrDesigner; //TODO: Retourner le pointeur vers le designer crée.
 }
 
-//TODO: Fonction qui change la taille du tableau de jeux de ListeJeux.
-void changerTailleTableauJeux(ListeJeux& listeJeux) {
-	int capaciteDoublee = 2 * listeJeux.capacite;
+//TODO: Fonction qui change la taille du tableau de jeux de ListeJeux (listeJeuxParticipes).
+void changerTailleTableauJeux(ListeJeux& tableauJeux) {
+	int capaciteDoublee = 2 * tableauJeux.capacite;
 	Jeu** nouveauTableauJeux = new Jeu * [capaciteDoublee];
-	listeJeux.capacite = capaciteDoublee;
-	for (int i = 0; i < listeJeux.nElements; i++) {
-		nouveauTableauJeux[i] = listeJeux.elements[i];
+	tableauJeux.capacite = capaciteDoublee;
+	for (auto i : range(tableauJeux.nElements)) {
+		nouveauTableauJeux[i] = tableauJeux.elements[i];
 	}
-	delete[] listeJeux.elements;
-	listeJeux.elements = nouveauTableauJeux;
+	delete[] tableauJeux.elements;
+	tableauJeux.elements = nouveauTableauJeux;
 }
 
-//TODO: Fonction pour ajouter un Jeu à ListeJeux.
-void ajouterJeuDansListe(ListeJeux& listeJeux, Jeu jeu) {
-	if (listeJeux.nElements == listeJeux.capacite - 1) {
+//TODO: Fonction pour ajouter un Jeu à ListeJeux (listeJeuxParticipes).
+void ajouterJeuDansListe(ListeJeux& listeJeux, Jeu* jeu) {
+	if (listeJeux.capacite == 0) {
+		listeJeux.capacite = 1;
+	}
+	if (listeJeux.nElements == listeJeux.capacite) {
 		changerTailleTableauJeux(listeJeux);
 	}
+	listeJeux.elements[listeJeux.nElements] = jeu;
 	listeJeux.nElements += 1;
-	listeJeux.elements[nElements] = jeu;
 }
 
-//TODO: Fonction qui enlève un jeu de ListeJeux.
+//TODO: Fonction qui enlève un jeu de ListeJeux (listeJeuxParticipes).
 
-Jeu* lireJeu(istream& fichier)
+Jeu* lireJeu(istream& fichier, ListeJeux& listeJeux)
 {
 	Jeu jeu = {};
 	jeu.titre = lireString(fichier);
@@ -86,19 +109,20 @@ Jeu* lireJeu(istream& fichier)
 	jeu.developpeur = lireString(fichier);
 	jeu.designers.nElements = lireUint8(fichier);
 
-	//TODO: Ajouter en mémoire le jeu lu. Il faut revoyer le pointeur créé.
-	Jeu* ptrJeu = &jeu;// new Jeu;
-	//ptrJeu = &jeu;
+	//TODO: Ajouter en mémoire le jeu lu. Il faut renvoyer le pointeur créé.
+	Jeu* ptrJeu = new Jeu(jeu);
+	ptrJeu->designers.elements = new Designer * [ptrJeu->designers.nElements];
+	ptrJeu->designers.capacite = ptrJeu->designers.nElements;
+	cout << ptrJeu->titre << endl;
 	// TIP: Afficher un message lorsque l'allocation du jeu est réussie pour aider au débogage.
-	/*if (*ptrJeu) {
-		cout << "L'allocation du jeu est réussie.";
-	}*/
 	// Vous pouvez enlever l'affichage une fois que le tout fonctionne.
 
 
 	for ([[maybe_unused]] int i : iter::range(jeu.designers.nElements)) {
-		lireDesigner(fichier);  //TODO: Mettre le designer dans la liste des designer du jeu.
+		Designer* nouveauDesigner = lireDesigner(fichier, listeJeux);  //TODO: Mettre le designer dans la liste des designer du jeu.
+		ptrJeu->designers.elements[i] = nouveauDesigner;
 		//TODO: Ajouter le jeu à la liste des jeux auquel a participé le designer.
+		ajouterJeuDansListe(nouveauDesigner->listeJeuxParticipes, ptrJeu);// jeu.designers.elements[i].listeJeuxParticipes;
 	}
 	return ptrJeu; //TODO: Retourner le pointeur vers le nouveau jeu.
 }
@@ -108,10 +132,13 @@ ListeJeux creerListeJeux(const string& nomFichier)
 	ifstream fichier(nomFichier, ios::binary);
 	fichier.exceptions(ios::failbit);
 	int nElements = lireUint16(fichier);
-	ListeJeux listeJeux = {};
+
+	ListeJeux listeJeux = { 0, 1, new Jeu * [1] };
+
 	for ([[maybe_unused]] int n : iter::range(nElements))
 	{
-		listeJeux.elements[n] = lireJeu(fichier); //TODO: Ajouter le jeu à la ListeJeux.
+		Jeu* nouveauJeu = lireJeu(fichier, listeJeux); //TODO: Ajouter le jeu à la ListeJeux.
+		listeJeux.elements[n] = nouveauJeu;
 	}
 
 	return listeJeux; //TODO: Renvoyer la ListeJeux.
@@ -156,6 +183,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	//TODO: Appel à votre fonction d'affichage de votre liste de jeux.
 
 	//TODO: Faire les appels à toutes vos fonctions/méthodes pour voir qu'elles fonctionnent et avoir 0% de lignes non exécutées dans le programme (aucune ligne rouge dans la couverture de code; c'est normal que les lignes de "new" et "delete" soient jaunes).  Vous avez aussi le droit d'effacer les lignes du programmes qui ne sont pas exécutée, si finalement vous pensez qu'elle ne sont pas utiles.
-	ajouterJeuDansListe(listeJeux);
+
+	//ajouterJeuDansListe(listeJeux, );
 	//TODO: Détruire tout avant de terminer le programme.  Devrait afficher "Aucune fuite detectee." a la sortie du programme; il affichera "Fuite detectee:" avec la liste des blocs, s'il manque des delete.
 }

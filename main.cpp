@@ -41,8 +41,8 @@ string lireString(istream& fichier)
 
 
 Designer* chercherDesigner(ListeJeux& listeJeux, Designer& designer) {
-	for (Jeu* jeu : span(listeJeux.elements, listeJeux.nElements)) {
-		for (Designer* autreDesigner : span(jeu->designers.elements,
+	for (Jeu* jeu : gsl::span(listeJeux.elements, listeJeux.nElements)) {
+		for (Designer* autreDesigner : gsl::span(jeu->designers.elements,
 			jeu->designers.nElements)) {
 			if (designer.nom == autreDesigner->nom) {
 				return autreDesigner;
@@ -82,7 +82,7 @@ void ajouterJeuDansListe(ListeJeux& listeJeux, Jeu* jeu) {
 	// Ligne non exécutée, mais nécessaire. Il faut s'assurer qu'une liste 
 	// ait au moins une capacité de 1 si nous voulons doubler sa capacité.
 	if (listeJeux.capacite < 1) {
-		listeJeux.capacite == 1;
+		listeJeux.capacite = 1;
 	}
 
 	if (listeJeux.nElements == listeJeux.capacite) {
@@ -149,7 +149,7 @@ ListeJeux creerListeJeux(const string& nomFichier)
 }
 
 void detruireJeu(Jeu* jeu) {
-	for (Designer* d : span(jeu->designers.elements,
+	for (Designer* d : gsl::span(jeu->designers.elements,
 		jeu->designers.nElements)) {
 		if (d != nullptr) {
 			for (auto i : range(d->listeJeuxParticipes.nElements)) {

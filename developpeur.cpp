@@ -11,22 +11,23 @@ Developpeur::Developpeur(const string& nom)
     : paireNomJeux_{ nom, {0, 0, nullptr} } 
 { }
 
-Developpeur::~Developpeur()
-{
+Developpeur::~Developpeur(){
    delete[] paireNomJeux_.second.elements;
 }
-const string& Developpeur::lireNom() const
-{
+const string& Developpeur::lireNom() const{
     return paireNomJeux_.first; 
+}
+
+void Developpeur::afficher() const
+{
+    cout << "Developpeur : " << paireNomJeux_.first << endl;
 }
 
 int Developpeur::compterJeux(gsl::span<Jeu*> tousLesJeux) const
 {
     int compteur = 0;
-    for (Jeu* jeu : tousLesJeux) 
-    {
-        if (jeu->developpeur == paireNomJeux_.first)
-        {
+    for (Jeu* jeu : tousLesJeux) {
+        if (jeu->developpeur == paireNomJeux_.first){
             compteur++;
         }
     }
@@ -46,8 +47,7 @@ void Developpeur::mettreAJourJeux(gsl::span<Jeu*> tousLesJeux)
         paireNomJeux_.second.elements = new Jeu * [nMatch];
 
         unsigned index = 0;
-        for (Jeu* jeu : tousLesJeux)
-        {
+        for (Jeu* jeu : tousLesJeux) {
             if (jeu->developpeur == paireNomJeux_.first && index < nMatch)
             {
                 paireNomJeux_.second.elements[index++] = jeu;

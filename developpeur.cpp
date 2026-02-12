@@ -8,14 +8,17 @@ using namespace std;
 using gsl::span;
 
 Developpeur::Developpeur(const string& nom)
-    : paireNomJeux_{ nom, {0, 0, nullptr} } 
-{ }
-
-Developpeur::~Developpeur(){
-   delete[] paireNomJeux_.second.elements;
+    : paireNomJeux_{ nom, {0, 0, nullptr} }
+{
 }
-const string& Developpeur::lireNom() const{
-    return paireNomJeux_.first; 
+
+Developpeur::~Developpeur()
+{
+    delete[] paireNomJeux_.second.elements;
+}
+const string& Developpeur::lireNom() const
+{
+    return paireNomJeux_.first;
 }
 
 void Developpeur::afficher() const
@@ -27,7 +30,7 @@ int Developpeur::compterJeux(gsl::span<Jeu*> tousLesJeux) const
 {
     int compteur = 0;
     for (Jeu* jeu : tousLesJeux) {
-        if (jeu->developpeur == paireNomJeux_.first){
+        if (jeu->developpeur == paireNomJeux_.first) {
             compteur++;
         }
     }
@@ -55,4 +58,3 @@ void Developpeur::mettreAJourJeux(gsl::span<Jeu*> tousLesJeux)
         }
     }
 }
-

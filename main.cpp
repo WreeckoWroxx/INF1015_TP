@@ -9,6 +9,7 @@
 #include "debogage_memoire.hpp" // Ajout des numéros de ligne des "new" dans le rapport de fuites.
 // Doit être après les include du système, qui peuvent utiliser des
 // "placement new" (non supporté par notre ajout de numéros de lignes).
+#include "ListeDeveloppeurs.hpp"
 
 using namespace std;
 using namespace gsl;
@@ -225,7 +226,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	bibliotheque_cours::activerCouleursAnsi();
 #pragma endregion
 
-	//int* fuite = new int;  // Pour vérifier que la détection de fuites fonctionne; un message devrait dire qu'il y a une fuite à cette ligne.
+	int* fuite = new int;  // Pour vérifier que la détection de fuites fonctionne; un message devrait dire qu'il y a une fuite à cette ligne.
 
 	ListeJeux listeJeux = creerListeJeux("jeux.bin");
 
@@ -239,6 +240,42 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	afficherListeJeux(listeJeux);
 
 	afficherInfosDesigner(*(listeJeux.elements[0]->designers.elements[0]));
+
+
+
+	ListeDeveloppeurs listeDeveloppeurs;
+
+	for (Jeu* jeu : span(listeJeux.elements, listeJeux.nElements)) {
+		Developpeur* nouveauDeveloppeur = new Developpeur(jeu->developpeur);
+
+		unsigned nDeveloppeurs = listeDeveloppeurs.lireNElements();
+
+		listeDeveloppeurs.ajouterDeveloppeur(nouveauDeveloppeur);
+
+		if (listeDeveloppeurs.lireNElements() == nDeveloppeurs) {
+			delete nouveauDeveloppeur;
+		}
+		else {
+			nouveauDeveloppeur->mettreAJourJeux(span(listeJeux.elements,
+				listeJeux.nElements));
+		}
+	}
+
+	// Création d'un tableau qui contient tous les développeurs créés afin de 
+	// les détruire tous à la fin du programme, et ce, peu importe si
+	// le développeur a été retiré de elements_ de la classe ListeDeveloppeurs.
+	Developpeur* tableauDeveloppeurs[11] = {};
+	for (auto i : range(listeDeveloppeurs.lireNElements())) {
+		tableauDeveloppeurs[i] = listeDeveloppeurs.lireElements()[i];
+	}
+
+	listeDeveloppeurs.afficher();
+
+	listeDeveloppeurs.retirerDeveloppeur(listeDeveloppeurs.lireElements()[0]);
+
+	for (Developpeur* developpeur : span(tableauDeveloppeurs)) {
+		delete developpeur;
+	}
 
 	detruireListeJeux(listeJeux);
 }

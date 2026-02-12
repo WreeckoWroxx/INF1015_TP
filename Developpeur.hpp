@@ -18,6 +18,6 @@ public:
 	void mettreAJourJeux(gsl::span<Jeu*> tousLesJeux);
 	void afficher() const;
 
-private: 
+private:
 	pair <string, ListeJeux> paireNomJeux_;
 };

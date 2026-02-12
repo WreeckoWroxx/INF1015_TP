@@ -192,41 +192,6 @@ void detruireListeJeux(ListeJeux& listeJeux) {
 	cout << "Liste de jeux detruite.\n";
 }
 
-void afficherInfosDesigner(const Designer& d) {
-	cout << "Nom\t\t\t: " << d.nom << endl;
-	cout << "Annee de naissance\t: " << d.anneeNaissance << endl;
-	cout << "Pays\t\t\t: " << d.pays << endl;
-	cout << "Jeux auxquels " << d.nom << " a participe ("
-		<< d.listeJeuxParticipes.nElements << ") :\n";
-
-	for (auto i : range(d.listeJeuxParticipes.nElements)) {
-		cout << "\t\t\t  " << d.listeJeuxParticipes.elements[i]->titre << endl;
-	}
-}
-
-void afficherInfosJeux(const Jeu& j) {
-	cout << "Titre\t\t: " << j.titre << endl;
-	cout << "Annee de sortie : " << j.anneeSortie << endl;
-	cout << "Developpeur\t: " << j.developpeur << endl;
-	cout << "Designers:" << endl;
-
-	for (auto i : range(j.designers.nElements)) {
-		cout << "\t\t  " << j.designers.elements[i]->nom << endl;
-	}
-}
-
-void afficherListeJeux(ListeJeux& listeJeux) {
-	static const string nouvelLigneSeparation =
-		"\033[35m----------------------------------\033[0m\n";
-	cout << "Liste de jeux complete : " << endl << endl;
-
-	for (auto i : range(listeJeux.nElements)) {
-		cout << "\t\t " << listeJeux.elements[i]->titre << endl;
-		cout << "\t\t " << nouvelLigneSeparation;
-	}
-	cout << "\n\n";
-}
-
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 {
 #pragma region "Bibliothèque du cours"

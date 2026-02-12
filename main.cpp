@@ -1,10 +1,12 @@
 ﻿//
-//  Fichier: main.cpp, ListeDesigners.hpp, Jeu.hpp, ListeJeux.hpp, Designer.hpp
+//  Fichier: main.cpp, ListeDesigners.hpp, Jeu.hpp, ListeJeux.hpp, 
+//  Designer.hpp, listeDeveloppeurs.cpp, ListeDeveloppeurs.hpp,
+//  developpeur.cpp, Developpeur.hpp
 //  Auteurs: Dilane Ngoya Nguepjip (2448944), Cédric Zinck (2475088).
 //  Remis le 11 février 2026.
 //  Créé le 28 janvier 2026.
 //  Description: Lecture d'un fichier jeux.bin pour y extraire des informations
-//  de jeux et leur associer des designers. D'autres manipulations, comme 
+//  de jeux et leur associer des développeurs. D'autres manipulations, comme 
 //  l'affichage de ces informations, est possible.
 //
 
@@ -17,6 +19,7 @@
 #include "bibliotheque_cours.hpp"
 #include "verification_allocation.hpp"
 #include "debogage_memoire.hpp"
+#include "ListeDeveloppeurs.hpp"
 
 using namespace std;
 using namespace gsl;
@@ -238,14 +241,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	static const string ligneSeparation =
 		"\n\033[35m════════════════════════════════════════\033[0m\n";
 	cout << ligneSeparation << endl;
-	cout << "Premier jeu de la liste :" << endl;
-	afficherInfosJeux(*(listeJeux.elements[0]));
-	cout << ligneSeparation << endl;
-
-	afficherListeJeux(listeJeux);
-
-	afficherInfosDesigner(*(listeJeux.elements[0]->designers.elements[0]));
-
 
 
 	ListeDeveloppeurs listeDeveloppeurs;

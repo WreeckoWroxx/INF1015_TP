@@ -23,7 +23,11 @@ const string& Developpeur::lireNom() const
 
 void Developpeur::afficher() const
 {
-    cout << "Developpeur : " << paireNomJeux_.first << endl;
+    cout << paireNomJeux_.first << " a développé les jeux suivants :" << endl;
+    for (Jeu* jeu : span(paireNomJeux_.second.elements,
+        paireNomJeux_.second.nElements)) {
+        cout << "\t" << jeu->titre << endl;
+    }
 }
 
 int Developpeur::compterJeux(gsl::span<Jeu*> tousLesJeux) const

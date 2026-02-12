@@ -1,4 +1,14 @@
-﻿#include "Jeu.hpp"
+﻿//
+//  Fichier: main.cpp, ListeDesigners.hpp, Jeu.hpp, ListeJeux.hpp, Designer.hpp
+//  Auteurs: Dilane Ngoya Nguepjip (2448944), Cédric Zinck (2475088).
+//  Remis le 11 février 2026.
+//  Créé le 28 janvier 2026.
+//  Description: Lecture d'un fichier jeux.bin pour y extraire des informations
+//  de jeux et leur associer des designers. D'autres manipulations, comme 
+//  l'affichage de ces informations, est possible.
+//
+
+#include "Jeu.hpp"
 #include <iostream>
 #include <fstream>
 #include <span>
@@ -6,10 +16,7 @@
 #include "cppitertools/range.hpp"
 #include "bibliotheque_cours.hpp"
 #include "verification_allocation.hpp"
-#include "debogage_memoire.hpp" // Ajout des numéros de ligne des "new" dans le rapport de fuites.
-// Doit être après les include du système, qui peuvent utiliser des
-// "placement new" (non supporté par notre ajout de numéros de lignes).
-#include "ListeDeveloppeurs.hpp"
+#include "debogage_memoire.hpp"
 
 using namespace std;
 using namespace gsl;
@@ -225,8 +232,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char** argv)
 	// les supportent normalement par défaut.
 	bibliotheque_cours::activerCouleursAnsi();
 #pragma endregion
-
-	int* fuite = new int;  // Pour vérifier que la détection de fuites fonctionne; un message devrait dire qu'il y a une fuite à cette ligne.
 
 	ListeJeux listeJeux = creerListeJeux("jeux.bin");
 

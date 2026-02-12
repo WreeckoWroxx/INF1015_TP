@@ -7,7 +7,6 @@ using namespace std;
 
 class Developpeur
 {
-	//TODO: En faire une classe qui suit les principes OO (oriente objet).
 public:
 
 	Developpeur(const string& nom);
